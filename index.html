@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oman End of Service Calculator</title>
+  <title>End of Service Calculator - Oman</title>
   <style>
     /* CSS styles here */
     * {
@@ -168,6 +168,7 @@
       }
     }
 
+    /* Footer styles */
     .footer {
       margin-top: 30px;
       padding-top: 20px;
@@ -221,7 +222,6 @@
       50% { transform: scale(1); }
       100% { transform: scale(1); }
     }
-    
   </style>
 </head>
 <body>
@@ -295,7 +295,7 @@
       return (
         <div className="container">
           <div className="calculator">
-            <h1>Oman End of Service Calculator</h1>
+            <h1>End of Service Calculator - Oman</h1>
             <div className="form-group">
               <label>Employment Start Date</label>
               <input
@@ -388,23 +388,20 @@
                 <li>For service periods before July 31, 2023: ½ basic monthly salary per year of service</li>
                 <li>For service periods after July 31, 2023: Full basic monthly salary per year of service</li>
               </ul>
-              <p><b>This is for informational purposes only and should not replace professional legal advice.</b></p>
+              <p>This is for informational purposes only and should not replace professional legal advice.</p>
             </div>
-
-                        <!-- Add the footer here -->
-            <footer class="footer">
-              <div class="footer-content">
-                <div class="heart-container">
+            
+            <footer className="footer">
+              <div className="footer-content">
+                <div className="heart-container">
                   <span>Created with</span>
-                  <div class="heart">❤️</div>
+                  <div className="heart">❤️</div>
                   <span>by</span>
                 </div>
-                <a href="https://x.com/foxoman" target="_blank" class="author">Sultan Al Isaiee</a>
-                <div class="copyright">© 2025</div>
+                <a href="https://x.com/foxoman" target="_blank" className="author">Sultan Al Isaiee</a>
+                <div className="copyright">© 2025</div>
               </div>
             </footer>
-            <!-- End of footer -->
-              
           </div>
         </div>
       );
