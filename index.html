@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oman End of Service Calculator</title>
+  <style>
+    /* CSS styles here */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .calculator {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1 {
+      color: #2d3748;
+      font-size: 1.8rem;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #2d3748;
+      font-size: 1.4rem;
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #4a5568;
+    }
+
+    input, select {
+      border: 1px solid #cbd5e0;
+      border-radius: 4px;
+      font-size: 1rem;
+      padding: 8px 12px;
+      width: 100%;
+    }
+
+    input:focus, select:focus {
+      border-color: #4299e1;
+      outline: none;
+    }
+
+    .salary-container {
+      display: flex;
+      gap: 12px;
+    }
+
+    .salary-input {
+      flex: 1;
+    }
+
+    .currency-select {
+      width: 100px;
+    }
+
+    .calculate-btn {
+      background-color: #3182ce;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 8px;
+      padding: 10px 0;
+      transition: background-color 0.2s;
+      width: 100%;
+    }
+
+    .calculate-btn:hover {
+      background-color: #2b6cb0;
+    }
+
+    .error {
+      background-color: #fed7d7;
+      border-radius: 4px;
+      color: #c53030;
+      margin-top: 16px;
+      padding: 12px;
+    }
+
+    .result {
+      background-color: #f7fafc;
+      border-radius: 4px;
+      margin-top: 24px;
+      padding: 16px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td {
+      padding: 8px 0;
+    }
+
+    .value {
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .divider {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 12px;
+    }
+
+    .total {
+      font-weight: 600;
+    }
+
+    .total-value {
+      color: #2b6cb0;
+      font-size: 1.2rem;
+    }
+
+    .note {
+      color: #718096;
+      font-size: 0.8rem;
+      margin-top: 24px;
+    }
+
+    .note ul {
+      list-style-position: inside;
+      margin: 8px 0;
+    }
+
+    @media (max-width: 600px) {
+      .calculator {
+        padding: 16px;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <!-- Add React and ReactDOM scripts -->
+  <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+  
+  <!-- Add Babel for JSX transformation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Your React component -->
+  <script type="text/babel">
+    function App() {
+      const [startDate, setStartDate] = React.useState('');
+      const [endDate, setEndDate] = React.useState('');
+      const [basicSalary, setBasicSalary] = React.useState('');
+      const [currency, setCurrency] = React.useState('OMR');
+      const [result, setResult] = React.useState(null);
+      const [error, setError] = React.useState('');
+
+      const cutoffDate = new Date('2023-07-31');
+
+      const calculateEOS = () => {
+        setError('');
+        
+        if (!startDate || !endDate || !basicSalary) {
+          setError('Please fill all fields');
+          return;
+        }
+        
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        
+        if (start >= end) {
+          setError('End date must be after start date');
+          return;
+        }
+        
+        const salary = parseFloat(basicSalary);
+        if (isNaN(salary) || salary <= 0) {
+          setError('Please enter a valid salary');
+          return;
+        }
+        
+        // Time periods
+        const preCutoff = new Date(Math.min(end, cutoffDate));
+        const yearsBeforeCutoff = Math.max(0, (preCutoff - start) / (365.25 * 24 * 60 * 60 * 1000));
+        
+        let yearsAfterCutoff = 0;
+        if (end > cutoffDate) {
+          yearsAfterCutoff = (end - cutoffDate) / (365.25 * 24 * 60 * 60 * 1000);
+        }
+        
+        // Calculate benefits
+        const preCutoffBenefit = yearsBeforeCutoff * (salary / 2);
+        const postCutoffBenefit = yearsAfterCutoff * salary;
+        const totalBenefit = preCutoffBenefit + postCutoffBenefit;
+        
+        setResult({
+          yearsBeforeCutoff: Math.round(yearsBeforeCutoff * 100) / 100,
+          yearsAfterCutoff: Math.round(yearsAfterCutoff * 100) / 100,
+          totalYears: Math.round((yearsBeforeCutoff + yearsAfterCutoff) * 100) / 100,
+          preCutoffBenefit: Math.round(preCutoffBenefit * 100) / 100,
+          postCutoffBenefit: Math.round(postCutoffBenefit * 100) / 100,
+          totalBenefit: Math.round(totalBenefit * 100) / 100
+        });
+      };
+
+      return (
+        <div className="container">
+          <div className="calculator">
+            <h1>Oman End of Service Calculator</h1>
+            <div className="form-group">
+              <label>Employment Start Date</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>End Date</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group salary-container">
+              <div className="salary-input">
+                <label>Basic Monthly Salary</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="any"
+                  value={basicSalary}
+                  onChange={(e) => setBasicSalary(e.target.value)}
+                />
+              </div>
+              <div className="currency-select">
+                <label>Currency</label>
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                >
+                  <option value="OMR">OMR</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </div>
+            </div>
+            
+            <button onClick={calculateEOS} className="calculate-btn">
+              Calculate
+            </button>
+            
+            {error && (
+              <div className="error">
+                {error}
+              </div>
+            )}
+            
+            {result && (
+              <div className="result">
+                <h2>End of Service Benefits</h2>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td>Service period before Jul 31, 2023:</td>
+                      <td className="value">{result.yearsBeforeCutoff} years</td>
+                    </tr>
+                    <tr>
+                      <td>Service period after Jul 31, 2023:</td>
+                      <td className="value">{result.yearsAfterCutoff} years</td>
+                    </tr>
+                    <tr>
+                      <td>Total service period:</td>
+                      <td className="value">{result.totalYears} years</td>
+                    </tr>
+                    <tr className="divider">
+                      <td>Pre-July 2023 benefit (½ salary per year):</td>
+                      <td className="value">{result.preCutoffBenefit} {currency}</td>
+                    </tr>
+                    <tr>
+                      <td>Post-July 2023 benefit (full salary per year):</td>
+                      <td className="value">{result.postCutoffBenefit} {currency}</td>
+                    </tr>
+                    <tr className="divider total">
+                      <td>Total End of Service Benefit:</td>
+                      <td className="value total-value">{result.totalBenefit} {currency}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            )}
+            
+            <div className="note">
+              <p>Note: This calculator follows Oman labor law which stipulates:</p>
+              <ul>
+                <li>For service periods before July 31, 2023: ½ basic monthly salary per year of service</li>
+                <li>For service periods after July 31, 2023: Full basic monthly salary per year of service</li>
+              </ul>
+              <p>This is for informational purposes only and should not replace professional legal advice.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
