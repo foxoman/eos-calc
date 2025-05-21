@@ -270,11 +270,11 @@
         
         // Time periods
         const preCutoff = new Date(Math.min(end, cutoffDate));
-        const yearsBeforeCutoff = Math.max(0, (preCutoff - start) / (365.25 * 24 * 60 * 60 * 1000));
+        const yearsBeforeCutoff = Math.max(0, (preCutoff - start) / (365 * 24 * 60 * 60 * 1000));
         
         let yearsAfterCutoff = 0;
         if (end > cutoffDate) {
-          yearsAfterCutoff = (end - cutoffDate) / (365.25 * 24 * 60 * 60 * 1000);
+          yearsAfterCutoff = (end - cutoffDate) / (365 * 24 * 60 * 60 * 1000);
         }
         
         // Calculate benefits
@@ -383,7 +383,7 @@
             )}
             
             <div className="note">
-              <p><b>Note: This calculator follows Oman labor law which stipulates:</b></p>
+              <p><b>NOTE: This calculator follows Oman labor law which stipulates:</b></p>
               <ul>
                 <li>For service periods before July 31, 2023: ½ basic monthly salary per year of service</li>
                 <li>For service periods after July 31, 2023: Full basic monthly salary per year of service</li>
